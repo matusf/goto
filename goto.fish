@@ -1,11 +1,11 @@
 function __goto_usage
     printf "\
-usage: goto [<option>] <alias> [<directory>]
+ usage: goto [<option>] <alias> [<directory>]
 
-default usage:
-goto <alias> - changes to the directory registered for the given alias
+ default usage:
+    goto <alias> - changes to the directory registered for the given alias
 
-OPTIONS:
+ OPTIONS:
     -r, --register: registers an alias
       goto -r|--register <alias> <directory>
     -u, --unregister: unregisters an alias
@@ -45,24 +45,94 @@ digits and underscores."
         return 1
     end
 
+    if test (__goto_find_directory $acronym) != ''
+        echo "Alias already exists."
+        return 1
+    end
+
     echo $acronym (realpath $directory) >> $GOTO_DB
-    if $status -eq 0
+    if test $status -eq 0
         echo 'Alias successfully registered.'
     else
         echo 'Unable to register alias.'
+        return 1
     end
+end
+
+function __goto_find_directory
+    echo (cat $GOTO_DB | string match -r "^$argv (.+)\$")[2]
+end
+
+function __goto_directory
+    set directory (__goto_find_directory $argv)
+
+    if test $directory = ""
+        echo "Alias: '$argv' not found."
+        return 1
+    end
+
+    cd $directory ^ /dev/null
+    if test $status -ne 0
+        echo "Failed to goto: '$directory'."
+        return 1
+    end
+end
+
+function __goto_list
+    cat $GOTO_DB
+end
+
+function __goto_unregister
+    if test (count $argv) -lt 2
+        echo 'usage: goto -u|--unregister <alias>'
+        return 1
+    end
+    set acronym $argv[2]
+    set tmp_db $HOME/.goto_tmp
+    cat $GOTO_DB | string match -r "^(?!$acronym ).+" > $tmp_db
+    mv $tmp_db $GOTO_DB
+    echo 'Alias successfully unregistered.'
+end
+
+function __goto_expand
+    if test (count $argv) -lt 2
+        echo 'usage: goto -x|--expand <alias>'
+        return 1
+    end
+    echo (__goto_find_directory $argv[2])
+end
+
+function __goto_cleanup
+    set tmp_db $HOME/.goto_tmp
+    touch $tmp_db
+    for line in (cat $GOTO_DB)
+        if test -d (realpath (string split ' ' $line)[2])
+            echo $line >> $tmp_db
+        else
+            set acronym (string split ' ' $line)[1]
+            echo "Removing: '$acronym'."
+        end
+    end
+    mv $tmp_db $GOTO_DB
 end
 
 function goto
     if test (count $argv) -lt 1
         __goto_usage
+        return 1
     end
     __goto_resolve_db
     switch $argv[1]
         case -r or --register
             __goto_register $argv
         case -u or --unregister
-            echo -u
+            __goto_unregister $argv
+        case -l or --lists
+            __goto_list
+        case -x or --expand
+            __goto_expand $argv
+        case -c or --cleanup
+            __goto_cleanup
         case -h or --help
             __goto_usage
         case '*'
