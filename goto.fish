@@ -18,7 +18,6 @@ function __goto_usage
       goto -c|--cleanup
     -h, --help: prints this help
       goto -h|--help\n"
-     return 1
 end
 
 function __goto_resolve_db
@@ -116,7 +115,7 @@ function __goto_cleanup
     mv $tmp_db $GOTO_DB
 end
 
-function goto
+function goto -d 'quickly navigate to aliased directories'
     if test (count $argv) -lt 1
         __goto_usage
         return 1
@@ -140,5 +139,3 @@ function goto
     end
     return $status
 end
-
-goto $argv
