@@ -139,3 +139,14 @@ function goto -d 'quickly navigate to aliased directories'
     end
     return $status
 end
+
+# goto completions
+complete -c goto -x -a "(cat $HOME/.goto | string match -r '.+?\b')"
+complete -c goto -x -s u -l unregister -d "unregister an alias" \
+         -a "(cat $HOME/.goto | string match -r '.+?\b')"
+complete -c goto -x -s x -l expand -d "expands an alias" \
+         -a "(cat $HOME/.goto | string match -r '.+?\b')"
+complete -c goto -x -s r -l register -d "register an alias"
+complete -c goto -x -s h -l help -d "prints help message"
+complete -c goto -x -s l -l list -d "lists aliases"
+complete -c goto -x -s c -l cleanup -d "deletes non existent directory aliases"
