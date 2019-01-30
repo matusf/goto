@@ -126,7 +126,7 @@ function goto -d 'quickly navigate to aliased directories'
             __goto_register $argv
         case -u or --unregister
             __goto_unregister $argv
-        case -l or --lists
+        case -l or --list
             __goto_list
         case -x or --expand
             __goto_expand $argv
