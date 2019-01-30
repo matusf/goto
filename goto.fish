@@ -141,7 +141,8 @@ function goto -d 'quickly navigate to aliased directories'
 end
 
 # goto completions
-complete -c goto -x -a "(cat $HOME/.goto | string match -r '.+?\b')"
+complete -c goto -x -n 'test (count (commandline -opc)) -lt 2' \
+         -a "(cat $HOME/.goto | string match -r '.+?\b')"
 complete -c goto -x -s u -l unregister -d "unregister an alias" \
          -a "(cat $HOME/.goto | string match -r '.+?\b')"
 complete -c goto -x -s x -l expand -d "expands an alias" \
