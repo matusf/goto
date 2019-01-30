@@ -5,6 +5,7 @@ tab-completion
 **goto** is a port of [goto](https://github.com/iridakos/goto) to
 [fish shell](https://fishshell.com/).
 
+[![asciicast](https://asciinema.org/a/xNxJX0CikFMBj6XcGLb967uao.svg)](https://asciinema.org/a/xNxJX0CikFMBj6XcGLb967uao?t=0:03&speed=2)
 
 ## Installation
 ### Via [fisher](https://github.com/jorgebucaran/fisher)
