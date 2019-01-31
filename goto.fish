@@ -140,6 +140,7 @@ function goto -d 'quickly navigate to aliased directories'
     return $status
 end
 
+__goto_resolve_db
 # goto completions
 complete -c goto -x -n 'test (count (commandline -opc)) -lt 2' \
          -a "(cat $HOME/.goto | string match -r '.+?\b')"
