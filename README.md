@@ -34,8 +34,8 @@ $ goto --register <alias> <directory>
 
 ### Unregister an alias
 ```
-$ goto -u <alias> <directory>
-$ goto --unregister <alias> <directory>
+$ goto -u <alias>
+$ goto --unregister <alias>
 ```
 
 ### List aliases
@@ -71,3 +71,9 @@ $ goto --help
 ## Features
 - support for **tab-completion** (for both, options and aliases)
 - works for relative as well as absolute paths
+- follows [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+
+
+## Configuration
+You can configure the location of `goto` database by setting an environment
+variable `GOTO_DB` to a path to a file where you would like to store aliases.
