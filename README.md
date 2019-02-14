@@ -56,6 +56,12 @@ $ goto -x <alias>
 $ goto --expand <alias>
 ```
 
+### Print goto version
+```
+$ goto -v
+$ goto --version
+```
+
 ### Print a help message
 ```
 $ goto -h

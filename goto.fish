@@ -16,6 +16,8 @@ function __goto_usage
       goto -x|--expand <alias>
     -c, --cleanup: cleans up non existent directory aliases
       goto -c|--cleanup
+    -v, --version: prints version
+      goto -v|--version
     -h, --help: prints this help
       goto -h|--help\n"
 end
@@ -115,6 +117,10 @@ function __goto_cleanup
     mv $tmp_db $GOTO_DB
 end
 
+function ___goto_version
+    echo "0.1.0"
+end
+
 function goto -d 'quickly navigate to aliased directories'
     if test (count $argv) -lt 1
         __goto_usage
@@ -134,6 +140,8 @@ function goto -d 'quickly navigate to aliased directories'
             __goto_cleanup
         case -h or --help
             __goto_usage
+        case -v or --version
+            ___goto_version
         case '*'
             __goto_directory $argv[1]
     end
@@ -152,3 +160,4 @@ complete -c goto -x -s r -l register -d "register an alias"
 complete -c goto -x -s h -l help -d "prints help message"
 complete -c goto -x -s l -l list -d "lists aliases"
 complete -c goto -x -s c -l cleanup -d "deletes non existent directory aliases"
+complete -c goto -x -s v -l version -d "prints version"
