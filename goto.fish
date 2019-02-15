@@ -22,9 +22,18 @@ function __goto_usage
       goto -h|--help\n"
 end
 
-function __goto_resolve_db
-    set -g GOTO_DB "$HOME/.goto"
-    touch -a $GOTO_DB
+function __goto_get_db
+    if test -f "$GOTO_DB"
+        echo "$GOTO_DB"
+    else if test -d "$XDG_DATA_HOME"
+        mkdir -p "$XDG_DATA_HOME/goto"
+        touch -a "$XDG_DATA_HOME/goto/db"
+        echo "$XDG_DATA_HOME/goto/db"
+    else
+        mkdir -p "$HOME/.local/share/goto"
+        touch -a "$HOME/.local/share/goto/db"
+        echo "$HOME/.local/share/goto/db"
+    end
 end
 
 function __goto_register
@@ -51,7 +60,7 @@ digits and underscores."
         return 1
     end
 
-    echo $acronym (realpath $directory) >> $GOTO_DB
+    echo $acronym (realpath $directory) >> (__goto_get_db)
     if test $status -eq 0
         echo 'Alias successfully registered.'
     else
@@ -61,7 +70,7 @@ digits and underscores."
 end
 
 function __goto_find_directory
-    echo (cat $GOTO_DB | string match -r "^$argv (.+)\$")[2]
+    echo (__goto_list | string match -r "^$argv (.+)\$")[2]
 end
 
 function __goto_directory
@@ -80,7 +89,7 @@ function __goto_directory
 end
 
 function __goto_list
-    cat $GOTO_DB
+    cat (__goto_get_db)
 end
 
 function __goto_unregister
@@ -88,10 +97,11 @@ function __goto_unregister
         echo 'usage: goto -u|--unregister <alias>'
         return 1
     end
+    set db (__goto_get_db)
     set acronym $argv[2]
     set tmp_db $HOME/.goto_tmp
-    cat $GOTO_DB | string match -r "^(?!$acronym ).+" > $tmp_db
-    mv $tmp_db $GOTO_DB
+    cat $db | string match -r "^(?!$acronym ).+" > $tmp_db
+    mv $tmp_db $db
     echo 'Alias successfully unregistered.'
 end
 
@@ -104,9 +114,10 @@ function __goto_expand
 end
 
 function __goto_cleanup
+    set db (__goto_get_db)
     set tmp_db $HOME/.goto_tmp
     touch $tmp_db
-    for line in (cat $GOTO_DB)
+    for line in (__goto_list)
         if test -d (realpath (string split ' ' $line)[2])
             echo $line >> $tmp_db
         else
@@ -114,11 +125,15 @@ function __goto_cleanup
             echo "Removing: '$acronym'."
         end
     end
-    mv $tmp_db $GOTO_DB
+    mv $tmp_db $db
 end
 
 function ___goto_version
-    echo "0.1.0"
+    echo "1.0.0"
+end
+
+function __goto_find_aliases
+    __goto_list | string match -r '.+?\b'
 end
 
 function goto -d 'quickly navigate to aliased directories'
@@ -126,7 +141,7 @@ function goto -d 'quickly navigate to aliased directories'
         __goto_usage
         return 1
     end
-    __goto_resolve_db
+    __goto_get_db > /dev/null
     switch $argv[1]
         case -r or --register
             __goto_register $argv
@@ -148,14 +163,11 @@ function goto -d 'quickly navigate to aliased directories'
     return $status
 end
 
-__goto_resolve_db
+__goto_get_db > /dev/null
 # goto completions
-complete -c goto -x -n 'test (count (commandline -opc)) -lt 2' \
-         -a "(cat $HOME/.goto | string match -r '.+?\b')"
-complete -c goto -x -s u -l unregister -d "unregister an alias" \
-         -a "(cat $HOME/.goto | string match -r '.+?\b')"
-complete -c goto -x -s x -l expand -d "expands an alias" \
-         -a "(cat $HOME/.goto | string match -r '.+?\b')"
+complete -c goto -x -n "test (count (commandline -opc)) -lt 2" -a "(__goto_find_aliases)"
+complete -c goto -x -s u -l unregister -d "unregister an alias" -a "(__goto_find_aliases)"
+complete -c goto -x -s x -l expand -d "expands an alias" -a "(__goto_find_aliases)"
 complete -c goto -x -s r -l register -d "register an alias"
 complete -c goto -x -s h -l help -d "prints help message"
 complete -c goto -x -s l -l list -d "lists aliases"
