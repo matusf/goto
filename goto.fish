@@ -60,7 +60,7 @@ digits and underscores."
         return 1
     end
 
-    echo $acronym (realpath $directory) >> (__goto_get_db)
+    echo -e $acronym\t(realpath $directory) >> (__goto_get_db)
     if test $status -eq 0
         echo 'Alias successfully registered.'
     else
@@ -70,7 +70,7 @@ digits and underscores."
 end
 
 function __goto_find_directory
-    echo (__goto_list | string match -r "^$argv (.+)\$")[2]
+    echo (__goto_list | string match -r "^$argv\s(.+)\$")[2]
 end
 
 function __goto_directory
@@ -89,7 +89,7 @@ function __goto_directory
 end
 
 function __goto_list
-    cat (__goto_get_db)
+    cat (__goto_get_db) | string replace -r '\s' '\t' | sort
 end
 
 function __goto_unregister
@@ -100,7 +100,7 @@ function __goto_unregister
     set db (__goto_get_db)
     set acronym $argv[2]
     set tmp_db $HOME/.goto_tmp
-    cat $db | string match -r "^(?!$acronym ).+" > $tmp_db
+    cat $db | string match -r "^(?!$acronym\s).+" > $tmp_db
     mv $tmp_db $db
     echo 'Alias successfully unregistered.'
 end
@@ -118,10 +118,10 @@ function __goto_cleanup
     set tmp_db $HOME/.goto_tmp
     touch $tmp_db
     for line in (__goto_list)
-        if test -d (realpath (string split ' ' $line)[2])
+        if test -d (realpath (string replace -r '.*\s' '' $line))
             echo $line >> $tmp_db
         else
-            set acronym (string split ' ' $line)[1]
+            set acronym (string replace -r '.*\s' '' $line)
             echo "Removing: '$acronym'."
         end
     end
