@@ -129,7 +129,7 @@ function __goto_cleanup
 end
 
 function ___goto_version
-    echo "1.0.0"
+    echo "1.1.0"
 end
 
 function __goto_find_aliases

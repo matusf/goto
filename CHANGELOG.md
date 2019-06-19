@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 - 19/06/19
+### Changed
+- `goto --list` prints sorted tab separated table
+
 ## 1.0.0 - 15/02/19
 ### Added
 - version option
