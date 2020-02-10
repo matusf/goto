@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - 16/02/20
+### Changed
+- allow hyphens in aliases
+
 ## 1.1.0 - 19/06/19
 ### Changed
 - `goto --list` prints sorted tab separated table

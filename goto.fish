@@ -44,9 +44,9 @@ function __goto_register
     set acronym $argv[2]
     set directory $argv[3]
 
-    if not test (string match -r '^[\d\w_]+$' $acronym)
+    if not test (string match -r '^[\d\w_-]+$' $acronym)
         echo "Invalid alias: '$acronym'. Alises can contain only letters, \
-digits and underscores."
+digits, hyphens and underscores."
         return 1
     end
 
@@ -129,11 +129,11 @@ function __goto_cleanup
 end
 
 function ___goto_version
-    echo "1.1.0"
+    echo "1.1.1"
 end
 
 function __goto_find_aliases
-    __goto_list | string match -r '.+?\b'
+    __goto_list | string match -r '.+?\s'
 end
 
 function goto -d 'quickly navigate to aliased directories'
