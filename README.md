@@ -22,7 +22,7 @@ Simply copy the [goto.fish](https://raw.githubusercontent.com/matusf/goto/master
 to your `fish/functions` directory. (Typically `~/.config/fish/functions`) or run:
 
 ```
-curl --create-dirs -o ~/.config/fish/functions/goto.fish https://raw.githubusercontent.com/matusf/goto/master/goto.fish
+curl --create-dirs -o ~/.config/fish/functions/goto.fish https://raw.githubusercontent.com/matusf/goto/master/functions/goto.fish
 ```
 
 ## Usage
