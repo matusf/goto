@@ -81,7 +81,7 @@ function __goto_directory
         return 1
     end
 
-    cd $directory ^ /dev/null
+    cd $directory
     if test $status -ne 0
         echo "Failed to goto: '$directory'."
         return 1
